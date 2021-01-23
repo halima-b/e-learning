@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+{% block stylesheets %}
+    
+    <style>
+        .btn-type{
+            background-color: #d82a4e;
+            color: white;
+                    }
+       
+        .badge { 
+            position: relative; 
+            top: -12px; 
+            left: -8px; 
+            border-radius: 50%; 
+            color: white;
+            background-color: #d82a4e;
+       } 
+
+    </style>
+ {% endblock %}
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header section -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+
+
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <a href="/profile" class="site-btn header-btn">Profile</a>
+                    {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <a href="/login" class="site-btn header-btn">Login</a>
+                    {% endif %}
+
+                    <nav class="main-menu">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="{{ path('all_courses') }}">Courses</a></li>
+                            <li><a href="contact.html" >Contact</a></li>
+                                    
+                            {% if is_granted('ROLE_STUDENT') %}
+                                <li><a href="{{ path('wishlist_courses') }}" class="fa fa-heart">  <span class="badge badge-light">{{w_c_n}}</span></a></li>
+                                <li><a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a></li>
+                                <li>  <a href="/student/application">JOIN US</a></li>
+                            {% endif %}
+                            {% if app.user %}
+                            <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
+                            {% endif %}
+
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header section end -->
+
+    <!-- Hero section -->
+    <section class="page-info-section set-bg" data-setbg="images/page-bg/1.jpg" style="height: 250px">
+        <div class="container">
+            <div class="hero-text text-white">
+            </div>
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1">
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero section end -->
+
+    <!-- course section -->
+    <section class="course-section spad">
+        <div class="container">
+            <div class="section-title mb-0">
+                <h2>My Courses</h2>
+            </div>
+        </div>
+        <div class="course-warp">
+
+            <div class="row course-items-area">
+                <!-- course -->
+                {% for course in courses %}
+
+                    <div class="mix col-lg-3 col-md-4 col-sm-6 finance">
+                        <div class="course-item">
+                            <div class="course-thumb set-bg" data-setbg="{{ asset('uploads/images/' ~ course.image) }}">
+                                <div class="price">Price: {{ course.price }} </div>
+                            </div>
+                            <div class="course-info">
+                                <div class="course-text">
+                                    <h5>{{ course.title }}</h5>
+                                    <p>Lorem ipsum dolor sit amet, consectetur</p>
+                                 
+                                    <div>
+                                      
+                                        <p></p>     
+                                      
+                                    </div>  
+                                  
+    
+                                </div>
+                                <div class="course-author">
+                                    <a href="/courses/{{course.id}}" ><button class="btn btn-type mr-2">Details</button> </a> 
+                                    <a href="#" > <button class="btn btn-type mr-2">Start Course</button> </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <!-- course section end -->
+
+  
+
+
+  
+				
+					
+						
+							
+		
+
+
+{% endblock %}

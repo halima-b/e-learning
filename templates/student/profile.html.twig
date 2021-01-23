@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/sidebar/style.css') }}">
+    <style>
+      .badge { 
+            position: relative; 
+            top: -12px; 
+            left: -8px; 
+            border-radius: 50%; 
+            color: white;
+            background-color: #d82a4e;
+       } 
+       .btn-type{
+            background-color: #d82a4e;
+            color: white;
+        }
+        input,textarea{
+            border-color:lightgray !important;    /* Remove default borders */
+        }
+        input:focus,textarea:focus{
+            outline: none!important;      /* Remove default outline and use border or box-shadow */
+            border-color: none !important; 
+            box-shadow: 0 0 0 0.5px #d82a4e!important; /* Full freedom. (works also with border-radius) */
+        }
+      
+
+
+    </style>
+ {% endblock %}
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <div class="wrapper d-flex align-items-stretch">
+        <nav id="sidebar">
+            <div class="p-4 pt-5">
+              <a href="#" class="img logo rounded-circle mb-5" style="background-image: url('{{ asset('uploads/images/' ~ app.user.photo.image) }}')"></a>
+              
+        <ul class="list-unstyled components mb-5">
+       
+          <li>
+              <a href="/">Home</a>
+          </li>
+        
+          <li>
+          <a href="{{ path('all_courses') }}">All Courses</a>
+          </li>
+          <li>
+          <a href="#">My Courses</a>
+          </li>
+          <li>
+            <a href="{{ path('student') }}">Profile</a>
+      </li>
+      <li>
+        <a href="{{ path('student_password_edit') }}">Account</a>
+        </li>
+    
+          <li>
+            <a href="{{path('student_photo_edit')}}">Photo</a>
+            </li>
+        </ul>
+
+      
+
+      </div>
+    </nav>
+
+    <!-- Page Content  -->
+  <div id="content" class="p-4 p-md-5">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+
+        <button type="button" id="sidebarCollapse" class="btn btn-primary">
+          <i class="fa fa-bars"></i>
+          <span class="sr-only">Toggle Menu</span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="nav navbar-nav ml-auto">
+            <li>
+                <a href="{{ path('wishlist_courses') }}" class="fa fa-heart">  <span class="badge badge-light">{{w_c_n}}</span></a>
+            </li>
+            <li>
+                <a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a>
+
+            </li>
+         
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-panel">
+      <div class="content-wrapper ">
+         
+          <div class="row ">
+              <div class="col-8 grid-margin stretch-card">
+                  <div class="card">
+                      <div class="card-body">
+                          <h4 class="card-title">Edit Profile</h4>
+                          <p class="card-description"></p>
+                          <div class="forms-sample">{{ form_start(EditProfileForm) }}
+                              <div class="form-group">
+                                  <label for="exampleInputName1">Last Name</label>
+
+                                  {{ form_widget(EditProfileForm.nom) }}
+                              </div>
+                              <div class="form-group">
+                                  <label for="exampleInputName1">First Name</label>
+
+                                  {{ form_widget(EditProfileForm.prenom) }}
+                              </div>
+                              <div class="form-group">
+                                  <label for="exampleInputName1">Email</label>
+
+                                  {{ form_widget(EditProfileForm.email) }}
+                              </div>
+                             
+                              <button type="submit" class="btn btn-primary mr-2">  Update </button>
+
+                              <button class="btn btn-light">Cancel</button>
+                              {{ form_end(EditProfileForm) }}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+  
+          <!-- content-wrapper ends -->
+      </div>
+      <!-- partial -->
+  
+  </div>
+ </div>
+    </div>
+{% block javascript %}
+ <script src="{{ asset('assets/sidebar/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/sidebar/popper.js') }}"></script>
+    <script src="{{ asset('assets/sidebar/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/sidebar/main.js') }}"> </script>
+
+{% endblock %}
+  
+			 
+					
+						
+							
+		
+
+
+{% endblock %}

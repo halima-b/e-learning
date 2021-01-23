@@ -1,0 +1,16 @@
+{% block body %}
+
+    <div class="page-header">
+       
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 well">
+            {{ form_start(form_comment,  {'attr': {'method' : 'post', 'action' : path('comment-add')}}) }}
+           
+            <button type="submit" class="btn btn-primary">add</button>
+            {{ form_end(form_comment) }}
+        </div>
+    </div>
+
+{% endblock %}

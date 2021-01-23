@@ -1,0 +1,80 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset Password{% endblock %}
+
+ {% block stylesheets %}
+      <link rel="stylesheet" href="{{ asset('assets/login/fonts/material-icon/css/material-design-iconic-font.min.css')}}">
+
+      <!-- Main css -->
+      <link rel="stylesheet" href="{{ asset('assets/login/css/style.css')}}">
+
+      <style>
+        .btn-type{
+            background-color: #d82a4e;
+            color: white;
+        }
+        button{
+            border: none !important;    /* Remove default borders */
+        }
+        button:focus{
+            outline: none!important;      /* Remove default outline and use border or box-shadow */
+            box-shadow: 0 0 0 0.5px #d82a4e!important; /* Full freedom. (works also with border-radius) */
+        }
+     
+      
+      </style>
+  {% endblock %}
+
+{% block body %}
+
+
+    <!-- Hero section -->
+    <section class="hero-section set-bg" data-setbg="" style="height: 100%;">
+      
+
+                <div class="hero-text text-white">
+                    <div style="width: 250px; margin-left:615px;">
+                        {% for message in app.flashes('warning') %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                      </div> 
+                      <div style="width: 350px; margin-left:560px;">
+                      {% for message in app.flashes('success') %}
+                      <div class="alert alert-success alert-dismissible fade show" role="alert">
+                              {{ message }}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                  {% endfor %}
+                </div>
+                <h3>Forgot Password?</h3>
+                <p>enter your email to reset your password</p>
+         
+                {{form_start(form, {'attr': {'class': 'register-form'}})}}
+                
+                  <div class="form-group">
+                      <i class="zmdi zmdi-account material-icons-name">{{form_widget(form.email)}}</i>
+                    </div>  
+                    
+                  <div class="form-group">
+                       <button class="btn btn-type" type="submit">Reset</button>
+                    </div> 
+                {{form_end(form)}}
+       
+
+               
+            </div> 
+   
+    </section>
+    <!-- Hero section end -->
+
+
+
+{% endblock %}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Password Reset</title>
+</head>
+<body>
+    <p>
+       <h1>Hello,</h1> <br>
+       You are receiving this email to reset your password as you request. <br>
+        {# pour que le lien fonctionne, il est indispensable que le lien soit absolu. #}
+      <div> <a href="{{absolute_url(path('resetting', {'id': user.id, 'token': user.token}))}}"> Reset Password</a></div> 
+    </p>
+    <p>if you didn't request a password reset, no further action is required.</p>
+
+    Regards, <br>
+    E-learnig App
+</body>
+</html>

@@ -1,0 +1,148 @@
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/admin//assets/vendors/mdi/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin//assets/vendors/flag-icon-css/css/flag-icon.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin//assets/vendors/css/vendor.bundle.base.css') }}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{{ asset('assets/admin//assets/vendors/jquery-bar-rating/css-stars.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/admin//assets/vendors/font-awesome/css/font-awesome.min.css') }}" />
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{{ asset('assets/admin/assets/css/demo_1/style.css') }}" />
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="{{ asset('assets/admin/assets/images/') }}" />
+    <style>
+        .btn-type{
+            background-color: #d82a4e;
+            color: white;
+        }
+        input,textarea{
+            border: none !important;    /* Remove default borders */
+        }
+        input:focus,textarea:focus{
+            outline: none!important;      /* Remove default outline and use border or box-shadow */
+            box-shadow: 0 0 0 0.5px #d82a4e!important; /* Full freedom. (works also with border-radius) */
+        }
+        .custom-file-label:after{
+          content: "Upload";
+          background-color: #d82a4e;
+          color: white;
+         
+            }
+         .custom-file-label{
+                    border-color: #d82a4e !important;
+                
+                }
+       
+
+
+    </style>
+{% endblock %}
+{% block body %}
+
+
+<div class="main-panel">
+    <div class="content-wrapper col-8 align-self-center">
+        <div class="page-header ">
+            <h3 class="page-title">Application</h3>
+            <nav aria-label="breadcrumb">
+
+            </nav>
+        </div>
+        <div class="row ">
+            <div class="col-8 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Submit your application</h4>
+                        <p class="card-description"></p>
+                        <div class="forms-sample">{{ form_start(ApplicationForm) }}
+                            <div class="form-group">
+
+                                {{ form_widget(ApplicationForm.name) }}
+                            </div>
+                            <div class="form-group">
+
+                                {{ form_widget(ApplicationForm.prenom) }}
+                            </div>
+                            <div class="form-group">
+
+                                {{ form_widget(ApplicationForm.email) }}
+                            </div>
+                            <div class="form-group">
+
+                                {{ form_widget(ApplicationForm.phone) }}
+                            </div>
+                            <div class="form-group">
+
+                                {{ form_widget(ApplicationForm.message) }}
+                            </div>
+
+
+                            <div class="form-group">
+                                <input type="file" name="img[]" class="file-upload-default custom-file-input " id="customFile" />
+                                <div class="input-group col-xs-12">
+
+                                    {{ form_widget(ApplicationForm.cv, {
+                                        attr: {
+                                            'placeholder': 'Select an article image'
+                                        }
+                                    }) }}
+                                    <label class="custom-file-label" for="customFile">&nbsp;&nbsp;Choose file</label>
+
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-type mr-2">Submit</button>
+
+                            <button class="btn btn-light">Cancel</button>
+                            {{ form_end(ApplicationForm) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- content-wrapper ends -->
+    </div>
+    <!-- partial -->
+
+</div>
+
+
+{% block javascripts %}
+    <script src="{{ asset('assets/admin/assets/vendors/js/vendor.bundle.base.js') }}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{{ asset('assets/admin/assets/vendors/jquery-bar-rating/jquery.barrating.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/flot/jquery.flot.resize.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/flot/jquery.flot.categories.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/flot/jquery.flot.fillbetween.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/vendors/flot/jquery.flot.stack.js') }}"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{{ asset('assets/admin/assets/js/off-canvas.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/js/hoverable-collapse.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/js/misc.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/js/settings.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/js/todolist.js') }}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{{ asset('assets/admin/assets/js/dashboard.js') }}"></script>
+    <script src="{{ asset('assets/admin/assets/js/file-upload.js') }}"></script>
+    <script>
+                $('.custom-file-input').on('change', function(event) {
+                    var inputFile = event.currentTarget;
+                    $(inputFile).parent()
+                        .find('.custom-file-label')
+                        .html(inputFile.files[0].name);
+                });
+            </script>
+
+{% endblock %}
+
+
+{% endblock %}

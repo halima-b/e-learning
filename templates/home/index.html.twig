@@ -1,0 +1,245 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .badge { 
+        position: relative; 
+        top: -12px; 
+        left: -8px; 
+        border-radius: 50%; 
+        color: white;
+        background-color: #d82a4e;
+       } 
+</style>{% endblock %}
+
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header section -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+					<div class="nav-switch">
+						<i class="fa fa-bars"></i>
+					</div>
+				</div>
+                <div class="col-lg-12 col-md-12">
+
+
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <a href="/profile" class="site-btn header-btn">Profile</a>
+                    {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <a href="/login" class="site-btn header-btn">Login</a>
+                    {% endif %}
+
+                    <nav class="main-menu">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="{{ path('all_courses') }}">Courses</a></li>
+                            <li><a href="contact.html" >Contact</a></li>
+                            <li><a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a></li>
+  
+                            {% if is_granted('ROLE_STUDENT') %}
+                                <li><a href="{{ path('wishlist_courses') }}" class="fa fa-heart">  <span class="badge badge-light">{{w_c_n}}</span></a></li>
+                                <li>  <a href="/student/application">JOIN US</a></li>
+                            {% endif %}
+                            {% if app.user %}
+                            <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header section end -->
+
+    <!-- Hero section -->
+    <section class="hero-section set-bg" data-setbg="images/bg.jpg">
+        <div class="container">
+            <div class="hero-text text-white">
+                <h2>Get The Best Free Online Courses</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1">
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero section end -->
+
+
+    <!-- categories section -->
+    <section class="categories-section spad">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Course Categories</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+            </div>
+            <div class="row">
+                <!-- categorie -->
+                {% for category in categories %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="categorie-item">
+                        <div class="ci-thumb set-bg" data-setbg="{{ asset('uploads/images/' ~ category.image) }}"></div>
+                        <div class="ci-text">
+                            <a href="categories/{{ category.id }}"> <h5>{{ category.title }}</h5></a>
+                            <p>{{category.description}}</p>
+                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+    </section>
+    <!-- categories section end -->
+
+
+    <!-- search section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-warp">
+                <div class="section-title text-white">
+                    <h2>Search your course</h2>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <!-- search form -->
+                        <form class="course-search-form">
+                            <input type="text" placeholder="Course">
+                            <input type="text" class="last-m" placeholder="Category">
+                            <button class="site-btn">Search Couse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- search section end -->
+
+
+    <!-- course section -->
+    <section class="course-section spad">
+        <div class="container">
+            <div class="section-title mb-0">
+                <h2>Featured Courses</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+            </div>
+        </div>
+        <div class="course-warp">
+            <ul class="course-filter controls">
+              
+                
+            </ul>
+            <div class="row course-items-area">
+                <!-- course -->
+                {% for course in courses %}
+
+                <div class="mix col-lg-3 col-md-4 col-sm-6 finance">
+                    <div class="course-item">
+                        <div class="course-thumb set-bg" data-setbg="{{ asset('uploads/images/' ~ course.image) }}">
+                            <div class="price">Price: {{ course.price }} </div>
+                        </div>
+                        <div class="course-info">
+                            <div class="course-text">
+                                <a href="/courses/{{ course.id }}"><h5>{{ course.title }}</h5></a>
+                                <p>{{course.description}}</p>
+                                
+                            </div>
+                            <div class="course-author">
+                                <div class="ca-pic set-bg" data-setbg="images/authors/1.jpg"></div>
+                                <p>{{ course.author }}, <span>Developer</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <!-- course section end -->
+
+
+
+
+    <!-- banner section -->
+    <section class="banner-section spad">
+        <div class="container">
+            <div class="section-title mb-0 pb-2">
+                <h2>Join Our Community Now!</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+            </div>
+            <div class="text-center pt-5">
+                <a href="/register" class="site-btn">Register Now</a>
+            </div>
+        </div>
+    </section>
+    <!-- banner section end -->
+
+    <!-- footer section -->
+    <footer class="footer-section spad pb-0">
+        <div class="footer-top">
+            <div class="footer-warp">
+                <div class="row">
+                    <div class="widget-item">
+                        <h4>Contact Info</h4>
+                        <ul class="contact-list">
+                            <li>1481 Creekside Lane <br>Avila Beach, CA 931</li>
+                            <li>+53 345 7953 32453</li>
+                            <li>yourmail@gmail.com</li>
+                        </ul>
+                    </div>
+                    <div class="widget-item">
+                        <h4>Engeneering</h4>
+                        <ul>
+                            <li><a href="">Applied Studies</a></li>
+                            <li><a href="">Computer Engeneering</a></li>
+                            <li><a href="">Software Engeneering</a></li>
+                            <li><a href="">Informational Engeneering</a></li>
+                            <li><a href="">System Engeneering</a></li>
+                        </ul>
+                    </div>
+                    <div class="widget-item">
+                        <h4>Graphic Design</h4>
+                        <ul>
+                            <li><a href="">Applied Studies</a></li>
+                            <li><a href="">Computer Engeneering</a></li>
+                            <li><a href="">Software Engeneering</a></li>
+                            <li><a href="">Informational Engeneering</a></li>
+                            <li><a href="">System Engeneering</a></li>
+                        </ul>
+                    </div>
+                    <div class="widget-item">
+                        <h4>Development</h4>
+                        <ul>
+                            <li><a href="">Applied Studies</a></li>
+                            <li><a href="">Computer Engeneering</a></li>
+                            <li><a href="">Software Engeneering</a></li>
+                            <li><a href="">Informational Engeneering</a></li>
+                            <li><a href="">System Engeneering</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+           
+        </div>
+    </footer>
+    <!-- footer section end -->
+
+{% endblock %}

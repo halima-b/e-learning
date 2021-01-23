@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+{% block stylesheets %}
+   <style type="text/css"> 
+
+#header { 
+    visibility: hidden;   
+    } 
+
+#review{
+    margin-left: 2px !important;
+}
+.btn-type{
+    background-color: #d82a4e;
+    color: white;
+    margin-left: 6px;
+}
+input,textarea,select{
+    border: none !important;    /* Remove default borders */
+    margin: 4px;
+}
+input:focus,textarea:focus,select:focus{
+    outline: none!important;      /* Remove default outline and use border or box-shadow */
+    box-shadow: 0 0 0 0.5px #d82a4e!important; /* Full freedom. (works also with border-radius) */
+}
+
+.star-icon {
+    color: #ccc;
+    font-size: 24px;
+    vertical-align: middle;
+}
+
+.star-icon.filled {
+    color: #F7A115;
+}
+#rating{
+    margin-top: 2px !important;
+}
+
+</style> 
+ {% endblock %}
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header section -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+
+
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <a href="/profile" class="site-btn header-btn">Profile</a>
+                    {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <a href="/login" class="site-btn header-btn">Login</a>
+                    {% endif %}
+
+                    <nav class="main-menu">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="#">About us</a></li>
+                            <li><a href="courses.html">Courses</a></li>
+                            <li><a href="blog.html">News</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                            {% if app.user %}
+                                <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_STUDENT') %}
+                                <li>  <a href="/student/application">JOIN US</a></li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header section end -->
+
+    <!-- Hero section -->
+    <section class="hero-section set-bg" data-setbg="{{ asset('images/bg.jpg') }}" >
+        <div class="container">
+            <div class="hero-text text-white">
+                <h2>Get The Best Free Online Courses</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris scelerisque, at rutrum nulla <br> dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1">
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero section end -->
+
+
+    <!-- course section -->
+    <section class="course-section spad pb-0">
+        <div class="course-warp">
+            <div class="featured-courses">
+                <div class="featured-course course-item">
+                    <div class="course-thumb set-bg" data-setbg="{{ asset('uploads/images/' ~ course.image) }}">
+                        <div class="price">Price: {{ course.price }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 offset-lg-6 pl-0">
+                            <div class="course-info">
+                                <div class="course-text">
+                                    <h5>{{ course.title }}</h5>
+                                    
+                                    <p>{{course.description}}</p>
+                                    <div > <h6>{{course.level}}, {{course.language}}, <span class="students">{{students}}</span> Students enrolled, <span class="students">{{total}} </span>Reviews 
+                                        {% if avg != 0 %}
+                                        {% for i in range(1,avg) %}
+                                        <span class="star-icon filled">★</span>
+                                        {% endfor %}
+                                        {% endif %}
+                                        {% if avg != 5 %}
+                                        {% for i in range(1,5 - avg) %}
+                                        <span class="star-icon">★</span>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </h6>
+                                    </div>
+                                </div>
+                                <div class="course-author">
+                                    <div class="ca-pic set-bg" data-setbg="{{asset('images/courses/f-1.jpg')}}"></div>
+                                    <p>{{ course.author }}, <span>Developer</span></p>
+                                </div>
+                                <div class="course-author">
+                                    {% if course.free == true %}
+                                    <div class="site-btn btn-dark ">Free</div>
+                                    {% elseif course.free == false %}
+                                    <div class="site-btn btn-dark ">Buy Now</div>
+                                    {% endif %}
+                                    {% if p == null%}
+                                    <a href="{{ path('cart_add', {'id': course.id}) }}"> <div class="site-btn mr-3 mb-3 mb-md-0">Add to cart</div></a>
+                                    {% elseif p != null %}
+                                    <a > <div class="site-btn mr-3 mb-3 mb-md-0">Added to cart</div></a>
+                                    {% endif %}
+                                    {% if wl == null %}
+                                        <a href="/student/check/{{ course.id }}"> <div class="site-btn mr-3 mb-3 mb-md-0">Add to wishlist</div></a>
+                                    {% endif %}
+                                    {% if wl != null %}
+                                        <a href="/student/check/{{ course.id }}"> <div class="site-btn mr-3 mb-3 mb-md-0">Added to wishlist</div></a>
+                                    {% endif %}
+                                 </div>
+                                 {% if e != null and c == null %}
+                                <div class="course-author row align-items-start" id="review">
+                                <div class="site-btn mr-3 mb-3 mb-md-0 " id="bouton" onclick="bascule('header');">Add Review</div> 
+                                
+ 
+                                    <div id="header" class="col"> 
+                                                <div class="course-info" id="review"> 
+                                                            {{form_start(form_comment )}}
+                                                        {{form_widget(form_comment.content)}} 
+                                                           {{form_widget(form_comment.rating)}}
+                                                       <button type="submit" class="btn btn-type mr-2">  Submit </button>
+                                                            {{form_end(form_comment)}}
+                                                </div>
+                                
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+   
+
+
+<!-- list comments section -->
+{% for comment in comments %}
+<section class="single-course spad pb-0">
+    <div class="container">
+        <div class="course-meta-area">
+            <div class="row align-items-start">
+                <div class="col-md-auto offset-sm-1 ">
+					<div class="course-meta">
+                     <div class="course-author">
+                        <div class="ca-pic set-bg" data-setbg="{{asset('images/courses/f-1.jpg')}}"></div>
+                       <h6> {{comment.user.nom}} {{comment.user.prenom}}</h6>
+                       <p>{{comment.createdAt | date('d-m-Y')}}</p>
+
+                   </div>
+                </div>
+               </div>
+              
+               <div class="col-md-auto">
+                        <div class="course-author">
+                                <div id="rating"> 
+                                    {% for i in range(1,comment.rating) %}
+                                    <span class="star-icon filled">★</span>
+                                    {% endfor %}
+                                    {% if comment.rating != 5 %}
+                                    {% for i in range(1,5 - comment.rating) %}
+                                    <span class="star-icon">★</span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                                
+                                {{comment.content}}  
+                        
+                        </div>    
+                </div> 
+            </div>
+        </div>
+       
+    </div>
+    
+</section>
+{% endfor %}
+
+<!-- list comments section end -->
+
+    <div class="footer-bottom">
+           
+    </div>
+      
+
+{% block javascripts %}
+
+<script type="text/javascript"> 
+function bascule(id) 
+{ 
+   
+	if (document.getElementById(id).style.visibility == "hidden")
+			document.getElementById(id).style.visibility = "visible"; 
+	else	document.getElementById(id).style.visibility = "hidden"; 
+} 
+</script> 
+
+{% endblock %} 
+{% endblock %}
