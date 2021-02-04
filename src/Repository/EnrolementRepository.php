@@ -73,4 +73,14 @@ class EnrolementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     
     }
+    public function findById($student_id)
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.student', 's')
+            ->andWhere('s.id = :val1')
+            ->setParameter('val1', $student_id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

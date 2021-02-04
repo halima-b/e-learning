@@ -22,10 +22,7 @@ class Answer
      */
     private $answer;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $rightAnswer;
+   
 
     /**
      * @ORM\ManyToOne(targetEntity=Question::class, inversedBy="answer")
@@ -49,17 +46,7 @@ class Answer
         return $this;
     }
 
-    public function getRightAnswer(): ?string
-    {
-        return $this->rightAnswer;
-    }
-
-    public function setRightAnswer(string $rightAnswer): self
-    {
-        $this->rightAnswer = $rightAnswer;
-
-        return $this;
-    }
+  
 
     public function getQuestion(): ?Question
     {

@@ -35,9 +35,9 @@
 
 
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <a href="/profile" class="site-btn header-btn">Profile</a>
+                    <a href="/profile" class="site-btn header-btn">Profile</a>
                     {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <a href="/login" class="site-btn header-btn">Login</a>
+                            <a href="/login" class="site-btn header-btn">Login</a>
                     {% endif %}
 
                     <nav class="main-menu">
@@ -45,16 +45,15 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="{{ path('all_courses') }}">Courses</a></li>
                             <li><a href="contact.html" >Contact</a></li>
-                                    
+                            <li><a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a></li>
+  
                             {% if is_granted('ROLE_STUDENT') %}
                                 <li><a href="{{ path('wishlist_courses') }}" class="fa fa-heart">  <span class="badge badge-light">{{w_c_n}}</span></a></li>
-                                <li><a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a></li>
                                 <li>  <a href="/student/application">JOIN US</a></li>
                             {% endif %}
                             {% if app.user %}
                             <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
                             {% endif %}
-
 
                         </ul>
                     </nav>

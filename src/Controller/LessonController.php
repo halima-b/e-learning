@@ -86,7 +86,6 @@ class LessonController extends AbstractController
         $lesson = $repo->find($id);
         $course=$lesson->getSection()->getCourse();
         $id_course = $course->getId();
-      //  dd($id_course);
         $em = $this->getDoctrine()->getManager();
         $em->remove($lesson);
         $em->flush();

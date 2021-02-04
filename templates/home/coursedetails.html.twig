@@ -3,7 +3,14 @@
 {% block title %}Home{% endblock %}
 {% block stylesheets %}
    <style type="text/css"> 
-
+    .badge { 
+        position: relative; 
+        top: -12px; 
+        left: -8px; 
+        border-radius: 50%; 
+        color: white;
+        background-color: #d82a4e;
+       } 
 #header { 
     visibility: hidden;   
     } 
@@ -55,23 +62,24 @@ input:focus,textarea:focus,select:focus{
 
 
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <a href="/profile" class="site-btn header-btn">Profile</a>
+                    <a href="/profile" class="site-btn header-btn">Profile</a>
                     {% elseif not is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <a href="/login" class="site-btn header-btn">Login</a>
+                            <a href="/login" class="site-btn header-btn">Login</a>
                     {% endif %}
 
                     <nav class="main-menu">
                         <ul>
                             <li><a href="/">Home</a></li>
-                            <li><a href="#">About us</a></li>
-                            <li><a href="courses.html">Courses</a></li>
-                            <li><a href="blog.html">News</a></li>
-                            <li><a href="contact.html">Contact</a></li>
-                            {% if app.user %}
-                                <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
-                            {% endif %}
+                            <li><a href="{{ path('all_courses') }}">Courses</a></li>
+                            <li><a href="contact.html" >Contact</a></li>
+                            <li><a href="{{ path('panier') }}" class="fa fa-shopping-cart">  <span class="badge badge-light">{{items|length}}</span></a></li>
+  
                             {% if is_granted('ROLE_STUDENT') %}
+                                <li><a href="{{ path('wishlist_courses') }}" class="fa fa-heart">  <span class="badge badge-light">{{w_c_n}}</span></a></li>
                                 <li>  <a href="/student/application">JOIN US</a></li>
+                            {% endif %}
+                            {% if app.user %}
+                            <li>  <a href="{{ path('app_logout') }}">Logout</a></li>
                             {% endif %}
 
                         </ul>
@@ -133,10 +141,11 @@ input:focus,textarea:focus,select:focus{
                                     <p>{{ course.author }}, <span>Developer</span></p>
                                 </div>
                                 <div class="course-author">
+                                    {% if  e == null %}
                                     {% if course.free == true %}
                                     <div class="site-btn btn-dark ">Free</div>
                                     {% elseif course.free == false %}
-                                    <div class="site-btn btn-dark ">Buy Now</div>
+                                 <a href="/buy/{{course.id}}">  <div class="site-btn btn-dark ">Buy Now</div></a>
                                     {% endif %}
                                     {% if p == null%}
                                     <a href="{{ path('cart_add', {'id': course.id}) }}"> <div class="site-btn mr-3 mb-3 mb-md-0">Add to cart</div></a>
@@ -149,6 +158,11 @@ input:focus,textarea:focus,select:focus{
                                     {% if wl != null %}
                                         <a href="/student/check/{{ course.id }}"> <div class="site-btn mr-3 mb-3 mb-md-0">Added to wishlist</div></a>
                                     {% endif %}
+                                    {% endif %}
+                                    {% if  e != null %}
+                                   <a href="/formation/{{course.id}}" > <div  class="site-btn btn-dark ">Start Course</div></a>
+                                    {% endif %}
+
                                  </div>
                                  {% if e != null and c == null %}
                                 <div class="course-author row align-items-start" id="review">

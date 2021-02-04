@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+{% block stylesheets %}
+    
+   <style> 
+   .container-fluid{
+    position:fixed;
+    padding:0;
+    margin:0;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+      
+       
+       
+   }
+      #playlist{
+        float:right;
+        width: 15%;
+        margin-right: 40px;
+        margin-left: 40px;
+        margin-top: 40px;
+        height: 100%;
+        position: relative;
+        
+      }
+      #card{
+       
+        max-height: 555px;
+        min-height: 555px;
+        overflow-y: scroll;
+        list-style: none;
+        direction: rtl;
+      }
+      #content{
+          margin-top: 90px;
+          margin-left: 40px;
+          height: 100% !important;
+          width: 100%;
+          position: relative;
+          float: left;
+        
+      }
+      
+
+
+  
+    </style>
+ {% endblock %}
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+   
+        
+		<div class="container-fluid h-100">
+     
+            <div class="row justify-content-center h-100">
+       
+                <div class=" col-md-8"  id="content">
+                        <video id="video" width="100%" height="auto" controls>
+                            <source id="source" src="" type="video/mp4">
+                           
+                          </video>
+                    
+               
+                </div>
+          
+                <div class=" col-md-3" id="playlist" >
+                    <div class="card ">
+                        <h5 class="card-header">Full Course</h5>
+                        <div class="card-body"  id="card">
+                       {% for section in course.sections %}
+                           
+                    <div class="row">
+                        <div  style="width: 100%;">
+                            <h5 class="card-header">{{section.title}}</h5>
+                            <div class="card-body">
+                        {% for lesson in section.lessons %}
+                                 
+                               
+                             <a onClick="maFonction('{{lesson.content}}')"> <h5 id="button" class="card-title">{{lesson.title}}</h5></a>    
+                              
+                                
+                              
+                          {% endfor %}
+                            </div>
+                          </div>
+                     </div>
+                    
+                     {% endfor %}
+                   
+                      
+                </div>
+              <a  href="/student/quiz/{{quiz.id}}" > <h5 class="card-header" style="text-align: center;">Quiz</h5></a> 
+            </div>
+            </div>
+        </div>
+		</div>
+    
+
+ 		
+					
+        {% block javascripts %}
+
+                                    <script>
+                                   
+                                        function maFonction(lesson){
+                                          var vid = "{{ asset('uploads/videos/') }}"+lesson;
+                                          var video = document.getElementById('video');
+                                          var elemensource=video.getElementsByTagName('source');                                         
+                                      
+                                        elemensource[0].setAttribute('src', vid);  
+                                          
+                                        video.load();    
+                                        
+                                       }
+                                        
+                                         
+                                        
+                                    </script>
+        {% endblock %}				
+							
+		
+
+
+{% endblock %}

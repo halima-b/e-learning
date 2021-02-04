@@ -47,4 +47,18 @@ class QuizRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function countQuestions($quiz_id)
+    {
+
+        return $this->createQueryBuilder('q')
+            ->join('q.question', 'qst')
+            ->andWhere('q.id = :val1')
+            ->setParameter('val1', $quiz_id)
+            ->select('count(qst.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    
+    }
 }

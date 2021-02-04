@@ -27,13 +27,7 @@ class AnswerType extends AbstractType
                 ]
             ])
            
-            ->add('rightAnswer', TextType::class,[
-                "attr" => [
-                    "placeholder" => "right answer",
-                    "class" => "form-control"
-
-                ]
-            ])
+          
             ->add('question', EntityType::class,
 
                 [

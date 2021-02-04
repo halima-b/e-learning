@@ -55,6 +55,8 @@ class HomeController extends AbstractController
     public function profile()
     {
 
+        $instructor = $this->getUser();
+        
 
         if ( $this->isGranted('ROLE_ADMIN')) {
         return $this->redirectToRoute('admin');
@@ -63,7 +65,11 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('student');
         }
         if ($this->isGranted('ROLE_INSTRUCTOR')) {
+             $status=$instructor->getStatus();
+             if($status == 1)
             return $this->redirectToRoute('instructor');
+            elseif($status == 0)
+            return $this->redirectToRoute('suspendu');
         }
         return $this->redirectToRoute('app_login');
 
@@ -71,14 +77,33 @@ class HomeController extends AbstractController
     /**
      * @Route("/categories/{id}", name="courses")
      */
-    public function courses($id)
+    public function courses($id,SessionInterface $session)
     {
         $repo1 = $this->getDoctrine()->getRepository(Category::class);
         $category = $repo1->find($id);
         $courses = $category->getCourses();
+        $security_context = $this->container->get('security.authorization_checker');
+       
+        
+       
+        $wishlist_courses_n=0;
+        if($security_context->isGranted('IS_AUTHENTICATED_FULLY')){
+        $student = $this->getUser();
+        $student_id = $student->getId();
+        $wishlist_courses_n = $this->getDoctrine()->getRepository(WishList::class)->countAllCourses($student_id);
+     
+        }
+        $panier = $session->get('panier',[]);
+        $panierWithdata = [];
+        foreach($panier as $id => $quantity){
+            $panierWithdata[] = [
+                'course' => $this->getDoctrine()->getRepository(Course::class)->find($id),
+                'quantity' => $quantity
+            ];
+        }
 
         return $this->render('home/courses_categorie.html.twig', [
-            'controller_name' => 'HomeController', 'courses' => $courses
+            'controller_name' => 'HomeController', 'courses' => $courses,'w_c_n' => $wishlist_courses_n,'items' => $panierWithdata,
         ]);
     }
     /**
@@ -91,6 +116,8 @@ class HomeController extends AbstractController
         if(!empty($panier[$id])){
             $p = 1;
         }
+        $wishlist_courses_n=0;
+       
         $security_context = $this->container->get('security.authorization_checker');
         $course = $this->getDoctrine()->getRepository(Course::class)->find($id);
         
@@ -108,11 +135,19 @@ class HomeController extends AbstractController
         $wl = $this->getDoctrine()->getRepository(WishList::class)->findOneById($student_id, $id);
         $e = $this->getDoctrine()->getRepository(Enrolement::class)->findOneById($student_id, $id);
         $c = $this->getDoctrine()->getRepository(Comment::class)->findOneById($student_id, $id);
-        
+        $wishlist_courses_n = $this->getDoctrine()->getRepository(WishList::class)->countAllCourses($student_id);
 
     
     }
 
+    $panierWithdata = [];
+    foreach($panier as $id => $quantity){
+        $panierWithdata[] = [
+            'course' => $this->getDoctrine()->getRepository(Course::class)->find($id),
+            'quantity' => $quantity
+        ];
+    }
+     
         $user = $this->getUser();
         $comment = new Comment();
         $comment->setCourse($course);
@@ -134,7 +169,7 @@ class HomeController extends AbstractController
         }
 
         return $this->render('home/coursedetails.html.twig', [
-            'controller_name' => 'HomeController','course' => $course, 'p'=> $p,'wl' => $wl,'e' => $e,'c' => $c,'avg' => $average,'total' => $total,'students' => $students, 'form_comment' => $form->createView(),'comments' => $comments
+            'controller_name' => 'HomeController','course' => $course, 'p'=> $p,'wl' => $wl,'e' => $e,'c' => $c,'avg' => $average,'total' => $total,'students' => $students, 'form_comment' => $form->createView(),'comments' => $comments,'w_c_n' => $wishlist_courses_n,'items' => $panierWithdata
         ]);
     }
     /**
@@ -209,13 +244,15 @@ class HomeController extends AbstractController
             ];
         }
         $total =0;
-
+        
         foreach($panierWithdata as $item){
+       
             $totalitem = $item['course']->getPrice() * $item['quantity'];
             $total += $totalitem;
         }
+    
         $wishlist_courses_n=0;
-        if ( $this->isGranted('ROLE_ADMIN')) {
+        if ( $this->isGranted('ROLE_STUDENT')) {
         $student = $this->getUser();
         $student_id = $student->getId();
         $wishlist_courses_n = $this->getDoctrine()->getRepository(WishList::class)->countAllCourses($student_id);}
@@ -239,5 +276,33 @@ class HomeController extends AbstractController
 
     }
 
+     /**
+     * @Route("/404", name="suspendu")
+     */
+    public function suspend( ){
+
+     
+        return $this->render('instructor/suspendu.html.twig',[ ]);
+
+
+
+    }
+    /**
+     * @Route("/buy/{id}", name="buy")
+     */
+    public function buy($id,SessionInterface $session )
+    {   
+        $p = null;
+        
+        $panier = $session->get('panier',[]);
+        if(!empty($panier[$id])){
+            $p = 1;
+        }else{$panier[$id] = 1;}
+        
+        $session->set('panier',$panier);
+        
+        return $this->redirect($this->generateUrl('panier'));
+       
+    }
 
 }

@@ -113,7 +113,7 @@ class QuizController extends AbstractController
         $quiz = $this->getDoctrine()->getRepository(Quiz::class)->find($id);
         $question = new Question();
 
-        $form = $this->createForm(QuestionType::class, $question, array('rightAnswer' => $fields->getAnswer()));
+        $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -160,7 +160,7 @@ class QuizController extends AbstractController
         }
 
         /**
-     * @Route("/instructor/newanswer/{id}", name="newlesson")
+     * @Route("/instructor/newanswer/{id}", name="new_answer")
      */
     public function add(Request $request,$id)
     {
@@ -183,4 +183,81 @@ class QuizController extends AbstractController
 
         ]);
     }
+     /**
+     * @Route("/instructor/editanswer/{id}", name="edit_answer")
+     */
+    public function edit_answer(Request $request,$id)
+    {
+
+        $answer =  $this->getDoctrine()->getRepository(Answer::class)->find($id);
+        $quiz =$answer->getQuestion()->getQuiz();
+        $form = $this->createForm(AnswerType::class, $answer);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($answer);
+            $entityManager->flush();
+  
+            return $this->redirect($this->generateUrl('quiz_details',['id' => $quiz->getId()]));
+        }
+        return $this->render('quiz/newAnswer.html.twig', [
+            'quiz' => $quiz,'AnswerForm' => $form->createView(),
+            'editMode' => $answer->getId() !== null
+
+        ]);
+
+        }
+         /**
+     * @Route("/instructor/deleteanswer/{id}",name="delete_answer")
+     */
+    public function delete($id, Request $request){
+
+        $repo = $this->getDoctrine()->getRepository(Answer::class);
+        $answer = $repo->find($id);
+        $quiz =$answer->getQuestion()->getQuiz();
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($answer);
+        $em->flush();
+        return $this->redirect($this->generateUrl('quiz_details',['id' => $quiz->getId()]));
+
+    }
+      /**
+     * @Route("/instructor/deletequestion/{id}",name="delete_question")
+     */
+    public function delelte_qst($id, Request $request){
+
+        $repo = $this->getDoctrine()->getRepository(Question::class);
+        $question = $repo->find($id);
+        $quiz =$question->getQuiz();
+        $em = $this->getDoctrine()->getManager();
+        foreach ($question->getAnswer() as $answer){
+            $em->remove($answer);
+        }
+        $em->remove($question);
+        $em->flush();
+        return $this->redirect($this->generateUrl('quiz_details',['id' =>$quiz->getId()]));
+
+    }
+       /**
+     * @Route("/instructor/deletequiz/{id}",name="delete_quiz")
+     */
+    public function delete_quiz($id){
+        $repo = $this->getDoctrine()->getRepository(Quiz::class);
+        $quiz = $repo->find($id);
+        $em = $this->getDoctrine()->getManager();
+        foreach ($quiz->getQuestion() as $question){
+            foreach ($question->getAnswer() as $answer){
+                $em->remove($answer);
+            }
+            $em->remove($question);
+        }
+        $em->remove($quiz);
+        $em->flush();
+        return $this->redirectToRoute('quizzes');
+
+ 
+   }
+
+  
 }

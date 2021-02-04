@@ -27,14 +27,14 @@ class EnrolmentsController extends AbstractController
      */
     public function create(Request $request)
     {
-        $user = $this->getUser();
+        
 
         $enrolment = new Enrolement();
         
         $form = $this->createForm(EnrolmentType::class, $enrolment);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-         
+       $enrolment->setCreatedAt(new \DateTime());
             $enrolment = $form->getData();
 
 
@@ -42,12 +42,25 @@ class EnrolmentsController extends AbstractController
             $entityManager->persist($enrolment);
             $entityManager->flush();
 
-           // return $this->redirectToRoute('mycourses',['id' => $course->getId()]);
+            return $this->redirectToRoute('enrolments');
         }
 
       
         return $this->render('enrolments/new.html.twig', [
             'controller_name' => 'EnrolmentsController','EnrolmentForm' => $form->createView(),
         ]);
+    }
+
+       /**
+     * @Route("/admin/deleteenrolment/{id}",name="delete_enrl")
+     */
+    public function delete($id){
+        $repo = $this->getDoctrine()->getRepository(Enrolement::class);
+        $enrolment = $repo->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($enrolment);
+        $em->flush();
+        return $this->redirectToRoute('enrolments');
+
     }
 }

@@ -4,11 +4,21 @@ namespace App\Controller;
 
 use App\Entity\Course;
 use App\Entity\Enrolement;
+use App\Entity\Quiz;
+use App\Entity\Question;
 use App\Entity\WishList;
+use App\Entity\Answer;
+
 use App\Form\CourseType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Category;
+use App\Entity\Comment;
+use App\Form\CommentType;
+use App\Repository\WishListRepository;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 
 class CoursesController extends AbstractController
@@ -47,6 +57,7 @@ class CoursesController extends AbstractController
             $file->move($this->getParameter('images_directory'), $fileName);
             $course->setImage($fileName);
            $course->setAuthor($user->getNom().' '.$user->getPrenom());
+      
             $course->setInstructor($user);
             $course = $form->getData();
             if(!$course->getId()){$course->setCreatedAt(new \DateTime());}
@@ -78,6 +89,15 @@ class CoursesController extends AbstractController
             }
             $em->remove($section);
         }
+        foreach ($course->getQuiz() as $quiz){
+            foreach ($quiz->getQuestion() as $question){
+                foreach ($question->getAnswer() as $answer){
+                    $em->remove($answer);
+                }
+                $em->remove($question);
+            }
+            $em->remove($quiz);
+        }
         $em->remove($course);
         $em->flush();
         return $this->redirectToRoute('mycourses');
@@ -88,31 +108,66 @@ class CoursesController extends AbstractController
  /**
      * @Route("/courses", name="all_courses")
      */
-    public function index(Security $security)
+    public function index(Security $security,SessionInterface $session)
     {
         $courses = $this->getDoctrine()->getRepository(Course::class)->findAll();
+
+        $security_context = $this->container->get('security.authorization_checker');
+       
+        
+       
+        $wishlist_courses_n=0;
+        if($security_context->isGranted('IS_AUTHENTICATED_FULLY')){
+        $student = $this->getUser();
+        $student_id = $student->getId();
+        $wishlist_courses_n = $this->getDoctrine()->getRepository(WishList::class)->countAllCourses($student_id);
+     
+        }
+        $panier = $session->get('panier',[]);
+        $panierWithdata = [];
+        foreach($panier as $id => $quantity){
+            $panierWithdata[] = [
+                'course' => $this->getDoctrine()->getRepository(Course::class)->find($id),
+                'quantity' => $quantity
+            ];
+        }
         
 
         return $this->render('courses/allcourses.html.twig', [
             'controller_name' => 'CoursesController',
-            'courses' => $courses,
+            'courses' => $courses,'w_c_n' => $wishlist_courses_n,'items' => $panierWithdata,
         ]);
     }
  /**
      * @Route("/student/wishlist", name="wishlist_courses")
      */
-    public function list()
+    public function list(SessionInterface $session)
     {
       
+        $security_context = $this->container->get('security.authorization_checker');
+       
+        
+       
+        $wishlist_courses_n=0;
+        if($security_context->isGranted('IS_AUTHENTICATED_FULLY')){
         $student = $this->getUser();
         $student_id = $student->getId();
-        $courses = $this->getDoctrine()->getRepository(WishList::class)->findAllCourses($student_id);
         $wishlist_courses_n = $this->getDoctrine()->getRepository(WishList::class)->countAllCourses($student_id);
+        $courses =$this->getDoctrine()->getRepository(WishList::class)->findAllCourses($student_id);
+        }
+        $panier = $session->get('panier',[]);
+        $panierWithdata = [];
+        foreach($panier as $id => $quantity){
+            $panierWithdata[] = [
+                'course' => $this->getDoctrine()->getRepository(Course::class)->find($id),
+                'quantity' => $quantity
+            ];
+        }
 
        
       
         return $this->render('courses/wishlistcourses.html.twig', [
-            'courses' => $courses,'w_c_n' => $wishlist_courses_n
+            'courses' => $courses,'w_c_n' => $wishlist_courses_n,'items' => $panierWithdata
         ]);
     }
 

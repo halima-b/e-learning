@@ -24,6 +24,13 @@ class QuestionType extends AbstractType
 
                 ]
             ])
+            ->add('rightAnswer', TextType::class,[
+                "attr" => [
+                    "placeholder" => "right answer",
+                    "class" => "form-control"
+
+                ]
+            ])
         
 
         ;

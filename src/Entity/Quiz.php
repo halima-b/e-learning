@@ -5,12 +5,13 @@ namespace App\Entity;
 use App\Repository\QuizRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Normalizer\JsonSerializable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=QuizRepository::class)
  */
-class Quiz
+class Quiz  
 {
     /**
      * @ORM\Id()
@@ -104,5 +105,12 @@ class Quiz
         }
 
         return $this;
+    }
+
+    public function to_json() {
+        return json_encode(array(
+            'question' => $this->getQuestion(),
+                          
+        ));
     }
 }

@@ -1,0 +1,279 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+{% block stylesheets %}
+    <style>
+    
+      .quiz {
+  margin-top: 30px !important;
+  background-color: white;
+  box-sizing: border-box;
+  box-shadow: 0 0 2px black;
+  display: flex;
+  flex-direction: column;
+  padding: 4em 2em 4em;
+}
+
+.stem {
+  font-size: 3em;
+  text-align: center;
+  margin: 0 auto 1.2em;
+}
+
+.choice-flexbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.options {
+  width: 60%;
+  font-size: 1.5em;
+  color: white;
+  background-color: #d82a4e;
+  margin: 0.2em;
+  border-radius: 8px;
+  padding: 0.5em;
+}
+
+.progress {
+  width: 100%;
+  padding-top: 2em;
+  margin-top: 2em;
+}
+
+#progress {
+  width: 100%;
+}
+
+.refresh {
+  font-size: 1.5em;
+  color: white;
+  background-color: #d82a4e;
+  margin: 0.2em;
+  border-radius: 8px;
+  margin-top: 1em;
+  padding: 0.5em;
+  width: 150px;
+  text-align: center;
+}
+
+.refresh:hover {
+  transform: scale(1.02);
+  box-shadow: 0 3px 4px black, inset 0 0 4px grey;
+  cursor: pointer;
+}
+
+.refresh:focus {
+  outline: none;
+}
+
+@media only screen and (max-width: 1200px) {
+  .quiz {
+    width: 100%;
+  }
+  .progress {
+    width: 100%;
+    padding-top: 1em;
+    margin-top: 1em;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .quiz {
+    padding: 0.5em 1em 0.5em;
+  }
+  .stem {
+    font-size: 2em;
+  }
+  .options {
+    font-size: 1.2em;
+    width: 80%
+  }
+  .progress {
+    width: 100%;
+    padding-top: 0.7em;
+    margin-top: 0.7em;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .options:hover {
+    transform: scale(1.02);
+    box-shadow: 0 3px 4px black, inset 0 0 4px grey;
+    cursor: pointer;
+  }
+  .options:focus {
+    outline: none;
+  }
+}
+    </style>
+  
+ 
+ {% endblock %}
+{% block body %}
+
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+   
+        
+
+      <div class="container-fluid h-100" id="wrap">
+        <div class='quiz' id="quiz-area">
+          <div class='stem' id="stem"></div>
+          <div class='choice-flexbox'>
+            <div class="options" id="option0"></div>
+            <div class="options" id="option1"></div>
+            <div class="options" id="option2"></div>
+            <div class="options" id="option3"></div>
+            <div class="options" id="option4"></div>
+          </div>
+          <!--progress bar -->
+          <div class="progress">
+            <div><progress id="progress" max="100" value="0"></progress></div>
+            <div>Your progress</div>
+          </div>
+        </div>
+      </div>
+          
+
+        
+    
+
+ 		
+					
+        {% block javascripts %}
+           <script>
+            function Question(stem, choices, answer) {
+  this.stem = stem;
+  this.choices = choices;
+  this.answer = answer
+}
+
+Question.prototype.checkAnswer = function(choice) {
+  return (choice === this.answer);
+}
+
+// Controller
+
+function Quiz(questionList) {
+  this.score = 0;
+  this.questionList = questionList;
+  this.questionNo = 0;
+};
+
+Quiz.prototype.getCurrentQuestion = function() {
+  return this.questionList[this.questionNo];
+};
+
+Quiz.prototype.isEnded = function() {
+  return this.questionNo == this.questionList.length;
+};
+
+Quiz.prototype.evaluateAnswer = function(answer) {
+  if (this.getCurrentQuestion().checkAnswer(answer)) {
+    this.score++;
+  };
+  this.questionNo++;
+}
+
+// View
+
+function populate() {
+  if (quiz.isEnded()) {
+    showScores();
+  } else {
+    var element = document.getElementById('stem');
+    element.innerHTML = quiz.getCurrentQuestion().stem;
+
+    for (i = 0; i < quiz.getCurrentQuestion().choices.length; i++) {
+      var element = document.getElementById('option' + i);
+      element.innerHTML = quiz.getCurrentQuestion().choices[i];
+      checkAnswer('option' + i, quiz.getCurrentQuestion().choices[i]);
+      recordProgress();
+    };
+  }
+};
+
+function showScores() {
+  var scoreString = "<h1>Scores</h1>";
+  scoreString += "<h3>You scored " + quiz.score + " out of " + quiz.questionList.length + "</h3>"
+  scoreString += " <div id='refresh' class='refresh'>Re-take Quiz</div>"
+  var element = document.getElementById('quiz-area');
+  element.innerHTML = scoreString;
+
+  var reTake = document.getElementById('refresh');
+  reTake.onclick = function() {
+    refresh()
+  }
+};
+
+function checkAnswer(htmlId, answer) {
+  var element = document.getElementById(htmlId);
+  element.onclick = function() {
+    quiz.evaluateAnswer(answer);
+    populate();
+  };
+};
+
+function setProgressBar() {
+  var element = document.getElementById('progress');
+  element.setAttribute('max', quiz.questionList.length);
+};
+
+function recordProgress() {
+  var element = document.getElementById('progress');
+  element.setAttribute('value', quiz.questionNo);
+}
+
+function refresh() {
+  var renewHTML = '<div class="quiz" id="quiz-area"><div class="stem" id="stem"></div><div class="choice-flexbox"><div class="options" id="option0"></div><div class="options" id="option1"></div><div class="options" id="option2"></div><div class="options" id="option3"></div><div class="options" id="option4"></div></div>  <div class="progress"><div><progress id="progress" max="100" value="0"></progress></div><div>Your progress</div></div></div>'
+  var element = document.getElementById('wrap');
+  element.innerHTML = renewHTML
+
+  quiz.score = 0;
+  quiz.questionNo = 0;
+  populate();
+  setProgressBar();
+}
+
+ 
+/* console.log(count)
+function getJSonObject(value) {
+        return $.parseJSON(value.replace(/&quot;/ig, '"'));
+    }
+
+
+    var count = getJSonObject("{{count_qst|json_encode()}}");
+    var t1 = getJSonObject("{{t1[0]|json_encode()}}");
+    var t2 = getJSonObject("{{t1[1]|json_encode()}}");
+
+
+    
+        alert(count);*/
+    
+
+    var questions = [
+  new Question("Question 1?", ["choice1", "choice2", "choice3", "choice4", "choice5"], "choice1"),
+  new Question("Question 2?", ["choice1", "choice2", "choice3", "choice4", "choice5"], "choice2"),
+  new Question("Question 3?",["choice1", "choice2", "choice3", "choice4", "choice5"], "choice3"),
+  new Question("Question 4?", ["choice1", "choice2", "choice3", "choice4", "choice5"], "choice4"),
+  new Question("Question 5?", ["choice1", "choice2", "choice3", "choice4", "choice5"], "choice5")
+]
+
+var quiz = new Quiz(questions);
+
+populate();
+setProgressBar();
+           
+ </script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        {% endblock %}				
+							
+		
+
+
+{% endblock %}
